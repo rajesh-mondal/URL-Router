@@ -9,3 +9,5 @@ Router::get( '/', function () {
 Router::get( '/hello/world', function () {
     echo "Hello World";
 } );
+
+Router::cleanup();
