@@ -15,6 +15,9 @@ class Router {
     }
 
     static function get( $pattern, $callback ) {
+        if ( $_SERVER['REQUEST_METHOD'] != 'GET' ) {
+            return;
+        }
         $pattern = "~^{$pattern}/?$~";
         $params = self::getMatches( $pattern );
         if ( $params ) {
@@ -24,6 +27,10 @@ class Router {
                 $callback( ...$functionArguments );
             }
         }
+    }
+
+    static function post() {
+
     }
 
     static function cleanup() {
