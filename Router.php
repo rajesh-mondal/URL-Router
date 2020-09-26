@@ -29,8 +29,34 @@ class Router {
         }
     }
 
-    static function post() {
+    static function post( $pattern, $callback ) {
+        if ( $_SERVER['REQUEST_METHOD'] != 'POST' ) {
+            return;
+        }
+        $pattern = "~^{$pattern}/?$~";
+        $params = self::getMatches( $pattern );
+        if ( $params ) {
+            if ( is_callable( $callback ) ) {
+                self::$nomatch = false;
+                $functionArguments = array_slice( $params, 1 );
+                $callback( ...$functionArguments );
+            }
+        }
+    }
 
+    static function delete( $pattern, $callback ) {
+        if ( $_SERVER['REQUEST_METHOD'] != 'DELETE' ) {
+            return;
+        }
+        $pattern = "~^{$pattern}/?$~";
+        $params = self::getMatches( $pattern );
+        if ( $params ) {
+            if ( is_callable( $callback ) ) {
+                self::$nomatch = false;
+                $functionArguments = array_slice( $params, 1 );
+                $callback( ...$functionArguments );
+            }
+        }
     }
 
     static function cleanup() {
