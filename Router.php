@@ -14,10 +14,7 @@ class Router {
         return false;
     }
 
-    static function get( $pattern, $callback ) {
-        if ( $_SERVER['REQUEST_METHOD'] != 'GET' ) {
-            return;
-        }
+    private static function process( $pattern, $callback ){
         $pattern = "~^{$pattern}/?$~";
         $params = self::getMatches( $pattern );
         if ( $params ) {
@@ -27,36 +24,27 @@ class Router {
                 $callback( ...$functionArguments );
             }
         }
+    }
+
+    static function get( $pattern, $callback ) {
+        if ( $_SERVER['REQUEST_METHOD'] != 'GET' ) {
+            return;
+        }
+        self::process( $pattern, $callback );
     }
 
     static function post( $pattern, $callback ) {
         if ( $_SERVER['REQUEST_METHOD'] != 'POST' ) {
             return;
         }
-        $pattern = "~^{$pattern}/?$~";
-        $params = self::getMatches( $pattern );
-        if ( $params ) {
-            if ( is_callable( $callback ) ) {
-                self::$nomatch = false;
-                $functionArguments = array_slice( $params, 1 );
-                $callback( ...$functionArguments );
-            }
-        }
+        self::process( $pattern, $callback );
     }
 
     static function delete( $pattern, $callback ) {
         if ( $_SERVER['REQUEST_METHOD'] != 'DELETE' ) {
             return;
         }
-        $pattern = "~^{$pattern}/?$~";
-        $params = self::getMatches( $pattern );
-        if ( $params ) {
-            if ( is_callable( $callback ) ) {
-                self::$nomatch = false;
-                $functionArguments = array_slice( $params, 1 );
-                $callback( ...$functionArguments );
-            }
-        }
+        self::process( $pattern, $callback );
     }
 
     static function cleanup() {
