@@ -1,5 +1,7 @@
 <?php
 require "Router.php";
+
+use OurApplication\Controller\PriceController;
 use OurApplication\Routing\Router;
 
 Router::get( '/', function () {
@@ -29,5 +31,8 @@ Router::post( '/verb', function () {
 Router::delete( '/verb', function () {
     echo $_SERVER['REQUEST_METHOD'];
 } );
+
+Router::get( '/price', [PriceController::class, 'showPrice'] );
+Router::get( '/price2', "PriceController@showPrice" );
 
 Router::cleanup();

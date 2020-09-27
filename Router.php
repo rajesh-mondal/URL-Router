@@ -14,14 +14,27 @@ class Router {
         return false;
     }
 
-    private static function process( $pattern, $callback ){
+    private static function process( $pattern, $callback ) {
         $pattern = "~^{$pattern}/?$~";
         $params = self::getMatches( $pattern );
         if ( $params ) {
+            $functionArguments = array_slice( $params, 1 );
+            self::$nomatch = false;
             if ( is_callable( $callback ) ) {
-                self::$nomatch = false;
-                $functionArguments = array_slice( $params, 1 );
-                $callback( ...$functionArguments );
+                if ( is_array( $callback ) ) {
+                    $className = $callback[0];
+                    $methodName = $callback[1];
+                    $instance = $className::getInstance();
+                    $instance->$methodName( ...$functionArguments );
+                } else {
+                    $callback( ...$functionArguments );
+                }
+            } else {
+                $parts = explode( '@', $callback );
+                $className = "OurApplication\Controller\\" . $parts[0];
+                $methodName = $parts[1];
+                $instance = $className::getInstance();
+                $instance->$methodName( ...$functionArguments );
             }
         }
     }
